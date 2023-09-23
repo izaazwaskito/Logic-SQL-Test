@@ -1,0 +1,82 @@
+CREATE TABLE CUSTOMER
+(
+    CUST_ID BIGINT UNIQUE NOT NULL,
+    CUST_FIRSTNAME VARCHAR(30) NOT NULL,
+    CUST_LASTNAME VARCHAR(30) NOT NULL,
+    CUST_BIRTHDATE DATE,
+    CUST_GENDER CHAR(1) NOT NULL,
+    CUST_ADDRESS VARCHAR(50),
+    CUST_CITY VARCHAR(20),
+    CUST_POSTCODE CHAR(5)
+);
+
+CREATE TABLE ACCOUNT
+(
+    ACC_NUMBER CHAR(13) UNIQUE NOT NULL PRIMARY KEY,
+    ACC_OWNER BIGINT NOT NULL,
+    ACC_DATE_CREATE DATE NOT NULL,
+    ACC_BALANCE DECIMAL(10,0) NOT NULL,
+    FOREIGN KEY (ACC_OWNER) REFERENCES customer(cust_id)
+);
+
+
+CREATE TABLE TRANSACTION
+(
+    TRS_ID BIGINT UNIQUE NOT NULL PRIMARY KEY,
+    TRS_FROM_ACCOUNT CHAR(13) not NULL ,
+    TRS_DATE DATE NOT NULL,
+    TRS_AMOUNT DECIMAL(10,0) NOT NULL,
+    TRS_TYPE CHAR(2) NOT NULL,
+    FOREIGN key (TRS_FROM_ACCOUNT) REFERENCES account(acc_number)
+);
+
+CREATE TABLE TRANSACTION_TRANSFER
+(
+    TRS_ID BIGINT PRIMARY KEY NOT NULL,
+    TRS_TO_ACCOUNT CHAR(13) NOT NULL,
+    TRS_STATUS CHAR(1) NOT NULL,
+    FOREIGN KEY (trs_id) REFERENCES transaction(trs_id)
+);
+
+INSERT INTO account
+    (acc_number,acc_owner,acc_date_create,acc_balance)
+VALUES
+    (
+        '1',
+        '1234441231',
+        '2022-02-02',
+        '10'
+);
+SELECT *
+FROM account;
+
+INSERT INTO account
+    (acc_number,acc_owner,acc_date_create,acc_balance)
+VALUES
+    (
+        '2',
+        '1234441231',
+        '2022-02-02',
+        '10'
+);
+SELECT *
+FROM account;
+
+INSERT INTO account
+    (acc_number,acc_owner,acc_date_create,acc_balance)
+VALUES
+    (
+        '3',
+        '1234441231',
+        '2022-02-02',
+        '10'
+);
+SELECT *
+FROM account;
+
+
+SELECT c.CUST_ID , c.CUST_FIRSTNAME , c.CUST_LASTNAME , COUNT(a.ACC_NUMBER) as  Jumlah_Rekening
+FROM CUSTOMER c
+    LEFT JOIN ACCOUNT a ON c.CUST_ID = a.ACC_OWNER
+GROUP BY c.CUST_ID, c.CUST_FIRSTNAME, c.CUST_LASTNAME
+ORDER BY Jumlah_Rekening DESC;
